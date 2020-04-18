@@ -46,8 +46,25 @@ public class MainActivity extends AppCompatActivity {
 
         noteRecAdapter.itemClickListener(new NoteAdapter.OnItemClickListener() {
             @Override
-            public void onRemoveClick(Note note) {
-                noteViewModel.delete(note);
+            public void onRemoveClick(final Note note) {
+                final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Do you want to delete this note?")
+                        .setPositiveButton("delete", null)
+                        .setNegativeButton("Cancel",null)
+                        .show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        noteViewModel.delete(note);
+                        dialog.dismiss();
+                    }
+                });
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
             }
         });
 
