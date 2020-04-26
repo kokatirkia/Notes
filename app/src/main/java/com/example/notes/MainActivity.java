@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         binding=ActivityMainBinding.inflate(getLayoutInflater());
         View view=binding.getRoot();
         setContentView(view);
-        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
 
+        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
         binding.recId.setLayoutManager(new LinearLayoutManager(this));
         final NoteAdapter noteRecAdapter = new NoteAdapter();
         binding.recId.setAdapter(noteRecAdapter);
