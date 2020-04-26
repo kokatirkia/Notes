@@ -103,15 +103,15 @@ public class MainActivity extends AppCompatActivity {
         bindingMeter.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bindingMeter.title.getText().toString().isEmpty()
-                        || bindingMeter.description.getText().toString().isEmpty()
+                if (bindingMeter.title.getEditText().getText().toString().isEmpty()
+                        || bindingMeter.description.getEditText().getText().toString().isEmpty()
                 ) {
 
                     Toast.makeText(v.getContext(), "Fill Fields", Toast.LENGTH_SHORT).show();
                 } else {
                     Note note = new Note(
-                            bindingMeter.title.getText().toString(),
-                            bindingMeter.description.getText().toString());
+                            bindingMeter.title.getEditText().getText().toString(),
+                            bindingMeter.description.getEditText().getText().toString());
 
                     noteViewModel.insert(note);
                     Toast.makeText(v.getContext(), "Saved", Toast.LENGTH_SHORT).show();
