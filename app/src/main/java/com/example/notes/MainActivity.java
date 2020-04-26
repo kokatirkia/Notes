@@ -6,7 +6,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        binding=ActivityMainBinding.inflate(getLayoutInflater());
-        View view=binding.getRoot();
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
         setContentView(view);
 
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
@@ -45,13 +47,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.addNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNoteDialog();
+            }
+        });
+
         noteRecAdapter.itemClickListener(new NoteAdapter.OnItemClickListener() {
             @Override
             public void onRemoveClick(final Note note) {
                 final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Do you want to delete this note?")
                         .setPositiveButton("delete", null)
-                        .setNegativeButton("Cancel",null)
+                        .setNegativeButton("Cancel", null)
                         .show();
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -69,12 +78,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        binding.addNote.setOnClickListener(new View.OnClickListener() {
+        //swipe to delete note
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
-            public void onClick(View v) {
-                addNoteDialog();
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
             }
-        });
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                noteViewModel.delete(noteRecAdapter.getNoteAtIndex(viewHolder.getAdapterPosition()));
+            }
+        }).attachToRecyclerView(binding.recId);
 
     }
 
@@ -87,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId()==R.id.delete){
+        if (item.getItemId() == R.id.delete) {
             noteViewModel.deleteAllNotes();
             return true;
         }
@@ -107,15 +122,12 @@ public class MainActivity extends AppCompatActivity {
                 if (bindingMeter.title.getEditText().getText().toString().isEmpty()
                         || bindingMeter.description.getEditText().getText().toString().isEmpty()
                 ) {
-
                     Toast.makeText(v.getContext(), "Fill Fields", Toast.LENGTH_SHORT).show();
                 } else {
                     Note note = new Note(
                             bindingMeter.title.getEditText().getText().toString(),
                             bindingMeter.description.getEditText().getText().toString());
-
                     noteViewModel.insert(note);
-                    Toast.makeText(v.getContext(), "Saved", Toast.LENGTH_SHORT).show();
                     addMeterDialog.dismiss();
                 }
             }
