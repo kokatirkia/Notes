@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.example.notes.ui;
 
 import android.app.Application;
 
@@ -11,11 +11,11 @@ import com.example.notes.database.model.Note;
 
 import java.util.List;
 
-public class NoteViewModel extends AndroidViewModel {
+public class SharedViewModel extends AndroidViewModel {
     private NoteRepository repository;
     private LiveData<List<Note>> allNotes;
 
-    public NoteViewModel(@NonNull Application application) {
+    public SharedViewModel(@NonNull Application application) {
         super(application);
         repository = new NoteRepository(application);
         allNotes = repository.getAllNotes();

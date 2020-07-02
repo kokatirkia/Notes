@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.example.notes.ui;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +16,7 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
 
     private OnItemClickListener listener;
 
-    protected NoteAdapter() {
+    public NoteAdapter() {
         super(DIFF_CALLBACK);
     }
 
