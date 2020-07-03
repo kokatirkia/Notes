@@ -63,6 +63,14 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
             super(binding.getRoot());
             this.binding = binding;
 
+            binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
+                        listener.onRootClick(getItem(getAdapterPosition()));
+                    }
+                }
+            });
             binding.deleteNote.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -76,6 +84,7 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
 
     public interface OnItemClickListener {
         void onRemoveClick(Note note);
+        void onRootClick(Note note);
     }
 
     public void itemClickListener(OnItemClickListener listener) {

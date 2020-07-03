@@ -53,6 +53,12 @@ public class MainFragment extends Fragment {
             public void onRemoveClick(final Note note) {
                 deleteAlertDialog(note);
             }
+
+            @Override
+            public void onRootClick(Note note) {
+                sharedViewModel.setNote(note);
+                attachNoteUpdateFragment();
+            }
         });
 
         //swipe to delete note
@@ -107,6 +113,13 @@ public class MainFragment extends Fragment {
     private void attachAddNoteFragment() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, new AddNoteFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void attachNoteUpdateFragment(){
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_placeholder, new NoteUpdateFragment())
                 .addToBackStack(null)
                 .commit();
     }

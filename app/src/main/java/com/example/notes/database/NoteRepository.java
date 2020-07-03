@@ -28,6 +28,15 @@ public class NoteRepository {
         });
     }
 
+    public void update(final Note note) {
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                noteDao.update(note);
+            }
+        });
+    }
+
     public void delete(final Note note) {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
