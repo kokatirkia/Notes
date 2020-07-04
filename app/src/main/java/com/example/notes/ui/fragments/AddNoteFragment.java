@@ -1,6 +1,7 @@
 package com.example.notes.ui.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,12 @@ public class AddNoteFragment extends Fragment {
                 popFromBackStack();
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void popFromBackStack() {

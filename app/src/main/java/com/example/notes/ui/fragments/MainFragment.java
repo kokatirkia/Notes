@@ -83,6 +83,12 @@ public class MainFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
     private void initRecyclerView() {
         binding.recId.setLayoutManager(new LinearLayoutManager(getActivity()));
         noteRecAdapter = new NoteAdapter();
@@ -117,7 +123,7 @@ public class MainFragment extends Fragment {
                 .commit();
     }
 
-    private void attachNoteUpdateFragment(){
+    private void attachNoteUpdateFragment() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_placeholder, new NoteUpdateFragment())
                 .addToBackStack(null)

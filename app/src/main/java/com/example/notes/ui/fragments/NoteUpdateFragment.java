@@ -65,6 +65,12 @@ public class NoteUpdateFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
     private void popFromBackStack() {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().popBackStack();
