@@ -1,7 +1,6 @@
 package com.example.notes.ui.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,9 @@ import com.example.notes.database.model.Note;
 import com.example.notes.databinding.AddNoteFragmentBinding;
 import com.example.notes.ui.SharedViewModel;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AddNoteFragment extends Fragment {
     private AddNoteFragmentBinding binding;
     private SharedViewModel sharedViewModel;
@@ -33,25 +35,17 @@ public class AddNoteFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
-        binding.saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (binding.title.getText().toString().isEmpty()
-                        || binding.description.getText().toString().isEmpty()) {
-                    Toast.makeText(getActivity(), "Fill fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    sharedViewModel.insert(new Note(binding.title.getText().toString(),
-                            binding.description.getText().toString()));
-                    popFromBackStack();
-                }
-            }
-        });
-        binding.cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        binding.saveButton.setOnClickListener(v -> {
+            if (binding.title.getText().toString().isEmpty()
+                    || binding.description.getText().toString().isEmpty()) {
+                Toast.makeText(getActivity(), "Fill fields", Toast.LENGTH_SHORT).show();
+            } else {
+                sharedViewModel.insert(new Note(binding.title.getText().toString(),
+                        binding.description.getText().toString()));
                 popFromBackStack();
             }
         });
+        binding.cancelButton.setOnClickListener(v -> popFromBackStack());
     }
 
     @Override

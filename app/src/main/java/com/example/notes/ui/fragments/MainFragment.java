@@ -9,21 +9,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notes.ui.NoteAdapter;
 import com.example.notes.R;
 import com.example.notes.database.model.Note;
 import com.example.notes.databinding.MainFragmentBinding;
+import com.example.notes.ui.NoteAdapter;
 import com.example.notes.ui.SharedViewModel;
 
-import java.util.List;
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public class MainFragment extends Fragment {
     private MainFragmentBinding binding;
     private SharedViewModel sharedViewModel;
@@ -42,12 +41,7 @@ public class MainFragment extends Fragment {
 
         initRecyclerView();
         sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
-        sharedViewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<Note>>() {
-            @Override
-            public void onChanged(@Nullable List<Note> notes) {
-                noteRecAdapter.submitList(notes);
-            }
-        });
+        sharedViewModel.getAllNotes().observe(getViewLifecycleOwner(), notes -> noteRecAdapter.submitList(notes));
         noteRecAdapter.itemClickListener(new NoteAdapter.OnItemClickListener() {
             @Override
             public void onRemoveClick(final Note note) {
@@ -74,12 +68,7 @@ public class MainFragment extends Fragment {
             }
         }).attachToRecyclerView(binding.recId);
 
-        binding.addNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attachAddNoteFragment();
-            }
-        });
+        binding.addNote.setOnClickListener(v -> attachAddNoteFragment());
 
     }
 
@@ -101,31 +90,25 @@ public class MainFragment extends Fragment {
                 .setPositiveButton("delete", null)
                 .setNegativeButton("Cancel", null)
                 .show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sharedViewModel.delete(note);
-                dialog.dismiss();
-            }
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            sharedViewModel.delete(note);
+            dialog.dismiss();
         });
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> dialog.dismiss());
     }
 
     private void attachAddNoteFragment() {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_placeholder, new AddNoteFragment())
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_placeholder, new AddNoteFragment())
                 .addToBackStack(null)
                 .commit();
     }
 
     private void attachNoteUpdateFragment() {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_placeholder, new NoteUpdateFragment())
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_placeholder, new NoteUpdateFragment())
                 .addToBackStack(null)
                 .commit();
     }

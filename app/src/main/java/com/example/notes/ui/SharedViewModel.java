@@ -1,26 +1,23 @@
 package com.example.notes.ui;
 
-import android.app.Application;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
+import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.example.notes.database.NoteRepository;
 import com.example.notes.database.model.Note;
 
 import java.util.List;
 
-public class SharedViewModel extends AndroidViewModel {
+public class SharedViewModel extends ViewModel {
     private NoteRepository repository;
     private LiveData<List<Note>> allNotes;
     private MutableLiveData<Note> noteMutableLiveData;
 
-
-    public SharedViewModel(@NonNull Application application) {
-        super(application);
-        repository = new NoteRepository(application);
+    @ViewModelInject
+    public SharedViewModel(NoteRepository noteRepository) {
+        this.repository = noteRepository;
         allNotes = repository.getAllNotes();
         noteMutableLiveData = new MutableLiveData<>();
     }

@@ -9,13 +9,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notes.database.model.Note;
 import com.example.notes.databinding.NoteUpdateFragmentBinding;
 import com.example.notes.ui.SharedViewModel;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class NoteUpdateFragment extends Fragment {
     private NoteUpdateFragmentBinding binding;
     private SharedViewModel sharedViewModel;
@@ -33,35 +35,24 @@ public class NoteUpdateFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
-        sharedViewModel.getNote().observe(getViewLifecycleOwner(), new Observer<Note>() {
-            @Override
-            public void onChanged(Note note) {
-                updateNote = note;
-                binding.updateTitle.setText(note.getTitle());
-                binding.updateDescription.setText(note.getDescription());
-            }
+        sharedViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
+            updateNote = note;
+            binding.updateTitle.setText(note.getTitle());
+            binding.updateDescription.setText(note.getDescription());
         });
 
-        binding.updateSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (binding.updateTitle.getText().toString().isEmpty()
-                        || binding.updateDescription.getText().toString().isEmpty()) {
-                    Toast.makeText(getActivity(), "Fill fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    updateNote.setTitle(binding.updateTitle.getText().toString());
-                    updateNote.setDescription(binding.updateDescription.getText().toString());
-                    sharedViewModel.update(updateNote);
-                    popFromBackStack();
-                }
-            }
-        });
-        binding.updateCancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        binding.updateSaveButton.setOnClickListener(v -> {
+            if (binding.updateTitle.getText().toString().isEmpty()
+                    || binding.updateDescription.getText().toString().isEmpty()) {
+                Toast.makeText(getActivity(), "Fill fields", Toast.LENGTH_SHORT).show();
+            } else {
+                updateNote.setTitle(binding.updateTitle.getText().toString());
+                updateNote.setDescription(binding.updateDescription.getText().toString());
+                sharedViewModel.update(updateNote);
                 popFromBackStack();
             }
         });
+        binding.updateCancelButton.setOnClickListener(v -> popFromBackStack());
 
     }
 

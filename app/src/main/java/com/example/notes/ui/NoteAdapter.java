@@ -1,7 +1,6 @@
 package com.example.notes.ui;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -63,20 +62,14 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
             super(binding.getRoot());
             this.binding = binding;
 
-            binding.getRoot().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
-                        listener.onRootClick(getItem(getAdapterPosition()));
-                    }
+            binding.getRoot().setOnClickListener(v -> {
+                if (listener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    listener.onRootClick(getItem(getAdapterPosition()));
                 }
             });
-            binding.deleteNote.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
-                        listener.onRemoveClick(getItem(getAdapterPosition()));
-                    }
+            binding.deleteNote.setOnClickListener(v -> {
+                if (listener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    listener.onRemoveClick(getItem(getAdapterPosition()));
                 }
             });
         }

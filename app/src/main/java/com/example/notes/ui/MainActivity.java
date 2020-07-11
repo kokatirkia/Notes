@@ -7,13 +7,15 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.notes.ui.fragments.MainFragment;
 import com.example.notes.R;
 import com.example.notes.databinding.ActivityMainBinding;
+import com.example.notes.ui.fragments.MainFragment;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
@@ -31,8 +33,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void attachMainFragment() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_placeholder, new MainFragment()).commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_placeholder, new MainFragment()).commit();
     }
 
     @Override
