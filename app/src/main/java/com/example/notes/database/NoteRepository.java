@@ -5,9 +5,13 @@ import androidx.lifecycle.LiveData;
 import com.example.notes.database.model.Note;
 
 import java.util.List;
-import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.observers.DisposableSingleObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class NoteRepository {
     private NoteDao noteDao;
@@ -20,19 +24,71 @@ public class NoteRepository {
     }
 
     public void insert(final Note note) {
-        Executors.newSingleThreadExecutor().execute(() -> noteDao.insert(note));
+        Single.just(note)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new DisposableSingleObserver<Note>() {
+                    @Override
+                    public void onSuccess(@NonNull Note note) {
+                        noteDao.insert(note);
+                        dispose();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        dispose();
+                    }
+                });
     }
 
     public void update(final Note note) {
-        Executors.newSingleThreadExecutor().execute(() -> noteDao.update(note));
+        Single.just(note)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new DisposableSingleObserver<Note>() {
+                    @Override
+                    public void onSuccess(@NonNull Note note) {
+                        noteDao.update(note);
+                        dispose();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        dispose();
+                    }
+                });
     }
 
     public void delete(final Note note) {
-        Executors.newSingleThreadExecutor().execute(() -> noteDao.delete(note));
+        Single.just(note)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new DisposableSingleObserver<Note>() {
+                    @Override
+                    public void onSuccess(@NonNull Note note) {
+                        noteDao.delete(note);
+                        dispose();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        dispose();
+                    }
+                });
     }
 
     public void deleteAllNotes() {
-        Executors.newSingleThreadExecutor().execute(() -> noteDao.deleteAllNotes());
+        Single.just(1)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new DisposableSingleObserver<Integer>() {
+                    @Override
+                    public void onSuccess(@NonNull Integer i) {
+                        noteDao.deleteAllNotes();
+                        dispose();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        dispose();
+                    }
+                });
     }
 
     public LiveData<List<Note>> getAllNotes() {
