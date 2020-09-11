@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notes.database.model.Note;
@@ -23,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class AddNoteFragment extends Fragment {
     private AddNoteFragmentBinding binding;
     private SharedViewModel sharedViewModel;
+    private FragmentActivity context;
 
     @Nullable
     @Override
@@ -33,14 +35,20 @@ public class AddNoteFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
-        sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
+        if (getActivity() != null) context = getActivity();
+        sharedViewModel = new ViewModelProvider(context).get(SharedViewModel.class);
+
+        setUpOnClickListeners();
+    }
+
+    private void setUpOnClickListeners() {
         binding.saveButton.setOnClickListener(v -> {
             if (binding.title.getText().toString().isEmpty()
                     || binding.description.getText().toString().isEmpty()) {
-                Toast.makeText(getActivity(), "Fill fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Fill fields", Toast.LENGTH_SHORT).show();
             } else {
                 sharedViewModel.insert(new Note(binding.title.getText().toString(),
                         binding.description.getText().toString()));
@@ -50,21 +58,19 @@ public class AddNoteFragment extends Fragment {
         binding.cancelButton.setOnClickListener(v -> popFromBackStack());
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
     private void popFromBackStack() {
-        if (getActivity() != null) {
-            getActivity().getSupportFragmentManager().popBackStack();
-        }
+        context.getSupportFragmentManager().popBackStack();
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

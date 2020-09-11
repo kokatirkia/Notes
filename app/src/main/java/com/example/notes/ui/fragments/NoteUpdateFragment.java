@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notes.database.model.Note;
@@ -24,6 +25,7 @@ public class NoteUpdateFragment extends Fragment {
     private NoteUpdateFragmentBinding binding;
     private SharedViewModel sharedViewModel;
     private Note updateNote;
+    private FragmentActivity context;
 
     @Nullable
     @Override
@@ -34,16 +36,17 @@ public class NoteUpdateFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
-        sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
-        sharedViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
-            updateNote = note;
-            binding.updateTitle.setText(note.getTitle());
-            binding.updateDescription.setText(note.getDescription());
-        });
+        if (getActivity() != null) context = getActivity();
+        sharedViewModel = new ViewModelProvider(context).get(SharedViewModel.class);
 
+        setUpObserver();
+        setUpOnClickListener();
+    }
+
+    private void setUpOnClickListener() {
         binding.updateSaveButton.setOnClickListener(v -> {
             if (binding.updateTitle.getText().toString().isEmpty()
                     || binding.updateDescription.getText().toString().isEmpty()) {
@@ -56,24 +59,29 @@ public class NoteUpdateFragment extends Fragment {
             }
         });
         binding.updateCancelButton.setOnClickListener(v -> popFromBackStack());
-
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    private void setUpObserver() {
+        sharedViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
+            updateNote = note;
+            binding.updateTitle.setText(note.getTitle());
+            binding.updateDescription.setText(note.getDescription());
+        });
     }
 
     private void popFromBackStack() {
-        if (getActivity() != null) {
-            getActivity().getSupportFragmentManager().popBackStack();
-        }
+        context.getSupportFragmentManager().popBackStack();
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

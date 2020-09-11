@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +36,7 @@ public class MainFragment extends Fragment {
     private SharedViewModel sharedViewModel;
     private NoteAdapter noteRecAdapter;
     private List<Note> noteList;
+    private FragmentActivity context;
 
     @Nullable
     @Override
@@ -44,16 +46,31 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
+        if (getActivity() != null) context = getActivity();
+        sharedViewModel = new ViewModelProvider(context).get(SharedViewModel.class);
 
-        initRecyclerView();
-        sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
+        setUpRecyclerView();
+        setUpObservers();
+        setUpOnCLickListeners();
+    }
+
+    private void setUpRecyclerView() {
+        binding.recId.setLayoutManager(new LinearLayoutManager(getActivity()));
+        noteRecAdapter = new NoteAdapter();
+        binding.recId.setAdapter(noteRecAdapter);
+    }
+
+    private void setUpObservers() {
         sharedViewModel.getAllNotes().observe(getViewLifecycleOwner(), notes -> {
             noteRecAdapter.submitList(notes);
             noteList = new ArrayList<>(notes);
         });
+    }
+
+    private void setUpOnCLickListeners() {
         noteRecAdapter.itemClickListener(new NoteAdapter.OnItemClickListener() {
             @Override
             public void onRemoveClick(final Note note) {
@@ -72,12 +89,6 @@ public class MainFragment extends Fragment {
         binding.addNote.setOnClickListener(v -> attachAddNoteFragment());
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
     private void swipeToDeleteNote() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -92,14 +103,8 @@ public class MainFragment extends Fragment {
         }).attachToRecyclerView(binding.recId);
     }
 
-    private void initRecyclerView() {
-        binding.recId.setLayoutManager(new LinearLayoutManager(getActivity()));
-        noteRecAdapter = new NoteAdapter();
-        binding.recId.setAdapter(noteRecAdapter);
-    }
-
     private void deleteAlertDialog(final Note note) {
-        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+        final AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle("Do you want to delete this note?")
                 .setPositiveButton("delete", null)
                 .setNegativeButton("Cancel", null)
@@ -112,7 +117,7 @@ public class MainFragment extends Fragment {
     }
 
     private void attachAddNoteFragment() {
-        getActivity().getSupportFragmentManager()
+        context.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_placeholder, new AddNoteFragment())
                 .addToBackStack(null)
@@ -120,7 +125,7 @@ public class MainFragment extends Fragment {
     }
 
     private void attachNoteUpdateFragment() {
-        getActivity().getSupportFragmentManager()
+        context.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_placeholder, new NoteUpdateFragment())
                 .addToBackStack(null)
@@ -160,5 +165,11 @@ public class MainFragment extends Fragment {
             return true;
         }
         return true;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

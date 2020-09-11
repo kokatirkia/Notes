@@ -33,7 +33,7 @@ public class SharedViewModel extends ViewModel {
 
     public void fetchNotesMutableLIveData() {
         repository.getAllNotes()
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Note>>() {
                     @Override
