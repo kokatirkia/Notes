@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -34,7 +35,7 @@ public class NoteRepository {
         noteDao.deleteAllNotes().subscribeOn(Schedulers.io()).subscribe();
     }
 
-    public Observable<List<Note>> getAllNotes() {
+    public Flowable<List<Note>> getAllNotes() {
         return noteDao.getAllNotes();
     }
 

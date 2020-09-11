@@ -11,6 +11,7 @@ import com.example.notes.database.model.Note;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 
 @Dao
@@ -29,5 +30,5 @@ public interface NoteDao {
     Completable deleteAllNotes();
 
     @Query("SELECT * FROM note_table")
-    Observable<List<Note>> getAllNotes();
+    Flowable<List<Note>> getAllNotes();
 }
