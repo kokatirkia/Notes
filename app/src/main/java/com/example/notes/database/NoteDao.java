@@ -1,6 +1,5 @@
 package com.example.notes.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -10,6 +9,8 @@ import androidx.room.Update;
 import com.example.notes.database.model.Note;
 
 import java.util.List;
+
+import io.reactivex.Observable;
 
 @Dao
 public interface NoteDao {
@@ -27,5 +28,5 @@ public interface NoteDao {
     void deleteAllNotes();
 
     @Query("SELECT * FROM note_table")
-    LiveData<List<Note>> getAllNotes();
+    Observable<List<Note>> getAllNotes();
 }

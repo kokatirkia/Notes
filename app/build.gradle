@@ -42,9 +42,15 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    //RxJava-RxAndroid
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
+
     def room_version = "2.2.5"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
+    // RxJava support for Room
+    implementation "androidx.room:room-rxjava2:$room_version"
 
     def lifecycle_version = "2.2.0"
     // ViewModel
@@ -63,9 +69,5 @@ dependencies {
     annotationProcessor  "com.google.dagger:hilt-android-compiler:2.28-alpha"
     implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
     annotationProcessor 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
-
-    //RxJava-RxAndroid
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    implementation 'io.reactivex.rxjava3:rxjava:3.0.5'
 
 }

@@ -1,6 +1,6 @@
 package com.example.notes.database;
 
-import androidx.lifecycle.LiveData;
+import android.util.Log;
 
 import com.example.notes.database.model.Note;
 
@@ -8,19 +8,19 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.observers.DisposableSingleObserver;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
+
 
 public class NoteRepository {
     private NoteDao noteDao;
-    private LiveData<List<Note>> allNotes;
 
     @Inject
     public NoteRepository(NoteDao noteDao) {
         this.noteDao = noteDao;
-        allNotes = noteDao.getAllNotes();
     }
 
     public void insert(final Note note) {
@@ -91,8 +91,8 @@ public class NoteRepository {
                 });
     }
 
-    public LiveData<List<Note>> getAllNotes() {
-        return allNotes;
+    public Observable<List<Note>> getAllNotes() {
+        return noteDao.getAllNotes();
     }
 
 }
