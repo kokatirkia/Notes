@@ -16,17 +16,13 @@ import io.reactivex.schedulers.Schedulers;
 public class SharedViewModel extends ViewModel {
     private NoteRepository repository;
     private MutableLiveData<Note> noteMutableLiveData;
+    private LiveData<List<Note>> notes;
 
     @ViewModelInject
     public SharedViewModel(NoteRepository noteRepository) {
         this.repository = noteRepository;
-        noteMutableLiveData = new MutableLiveData<>();
-    }
-
-    public LiveData<List<Note>> getAllNotes() {
-        return LiveDataReactiveStreams.fromPublisher(
-                repository.getAllNotes().subscribeOn(Schedulers.io())
-        );
+        this.noteMutableLiveData = new MutableLiveData<>();
+        this.notes = LiveDataReactiveStreams.fromPublisher(repository.getAllNotes().subscribeOn(Schedulers.io()));
     }
 
     public void insert(Note note) {
@@ -53,4 +49,7 @@ public class SharedViewModel extends ViewModel {
         return noteMutableLiveData;
     }
 
+    public LiveData<List<Note>> getAllNotes() {
+        return notes;
+    }
 }
