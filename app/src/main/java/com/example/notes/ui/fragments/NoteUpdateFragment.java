@@ -41,9 +41,20 @@ public class NoteUpdateFragment extends Fragment {
         setHasOptionsMenu(true);
         if (getActivity() != null) context = getActivity();
         sharedViewModel = new ViewModelProvider(context).get(SharedViewModel.class);
+        updateNote = sharedViewModel.getNote();
 
-        setUpObserver();
         setUpOnClickListener();
+        setUpUi(savedInstanceState);
+    }
+
+    private void setUpUi(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            binding.updateTitle.setText(savedInstanceState.getString("title"));
+            binding.updateDescription.setText(savedInstanceState.getString("description"));
+        } else {
+            binding.updateTitle.setText(updateNote.getTitle());
+            binding.updateDescription.setText(updateNote.getDescription());
+        }
     }
 
     private void setUpOnClickListener() {
@@ -61,14 +72,6 @@ public class NoteUpdateFragment extends Fragment {
         binding.updateCancelButton.setOnClickListener(v -> popFromBackStack());
     }
 
-    private void setUpObserver() {
-        sharedViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
-            updateNote = note;
-            binding.updateTitle.setText(note.getTitle());
-            binding.updateDescription.setText(note.getDescription());
-        });
-    }
-
     private void popFromBackStack() {
         context.getSupportFragmentManager().popBackStack();
     }
@@ -77,6 +80,13 @@ public class NoteUpdateFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("title", binding.updateTitle.toString());
+        outState.putString("description", binding.updateDescription.toString());
     }
 
     @Override

@@ -21,12 +21,14 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        attachMainFragment();
+        attachMainFragment(savedInstanceState);
     }
 
-    private void attachMainFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_placeholder, new MainFragment()).commit();
+    private void attachMainFragment(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_placeholder, new MainFragment()).commit();
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.example.notes.ui;
 import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.notes.database.NoteRepository;
@@ -15,13 +14,12 @@ import io.reactivex.schedulers.Schedulers;
 
 public class SharedViewModel extends ViewModel {
     private NoteRepository repository;
-    private MutableLiveData<Note> noteMutableLiveData;
+    private Note note;
     private LiveData<List<Note>> notes;
 
     @ViewModelInject
     public SharedViewModel(NoteRepository noteRepository) {
         this.repository = noteRepository;
-        this.noteMutableLiveData = new MutableLiveData<>();
         this.notes = LiveDataReactiveStreams.fromPublisher(repository.getAllNotes().subscribeOn(Schedulers.io()));
     }
 
@@ -42,11 +40,11 @@ public class SharedViewModel extends ViewModel {
     }
 
     public void setNote(Note note) {
-        noteMutableLiveData.setValue(note);
+        this.note = note;
     }
 
-    public LiveData<Note> getNote() {
-        return noteMutableLiveData;
+    public Note getNote() {
+        return note;
     }
 
     public LiveData<List<Note>> getAllNotes() {

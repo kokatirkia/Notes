@@ -42,6 +42,14 @@ public class AddNoteFragment extends Fragment {
         sharedViewModel = new ViewModelProvider(context).get(SharedViewModel.class);
 
         setUpOnClickListeners();
+        setUpUi(savedInstanceState);
+    }
+
+    private void setUpUi(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            binding.title.setText(savedInstanceState.getString("title"));
+            binding.title.setText(savedInstanceState.getString("description"));
+        }
     }
 
     private void setUpOnClickListeners() {
@@ -60,6 +68,13 @@ public class AddNoteFragment extends Fragment {
 
     private void popFromBackStack() {
         context.getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("title", binding.title.toString());
+        outState.putString("description", binding.description.toString());
     }
 
     @Override
