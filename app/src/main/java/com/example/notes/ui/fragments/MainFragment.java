@@ -144,15 +144,9 @@ public class MainFragment extends Fragment {
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                List<Note> filteredList = new ArrayList<>();
-                for (Note item : noteList) {
-                    if (item.getTitle().toLowerCase().contains(newText.toLowerCase())) {
-                        filteredList.add(item);
-                    }
-                }
-                noteRecAdapter.submitList(filteredList);
-                return false;
+            public boolean onQueryTextChange(String query) {
+                noteRecAdapter.submitList(sharedViewModel.filterNotes(query));
+                return true;
             }
         });
         super.onCreateOptionsMenu(menu, inflater);
