@@ -7,20 +7,22 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.notes.ui.fragments.MainFragment"
-        android:label="MainFragment">
+        android:label="Notes">
         <action
             android:id="@+id/action_mainFragment_to_addNoteFragment"
-            app:destination="@id/addNoteFragment" />
+            app:destination="@id/addNoteFragment"
+            app:enterAnim="@anim/push_up" />
         <action
             android:id="@+id/action_mainFragment_to_noteUpdateFragment"
-            app:destination="@id/noteUpdateFragment" />
+            app:destination="@id/noteUpdateFragment"
+            app:enterAnim="@anim/slide_from_right" />
     </fragment>
     <fragment
         android:id="@+id/addNoteFragment"
         android:name="com.example.notes.ui.fragments.AddNoteFragment"
-        android:label="AddNoteFragment" />
+        android:label="Add Note" />
     <fragment
         android:id="@+id/noteUpdateFragment"
         android:name="com.example.notes.ui.fragments.NoteUpdateFragment"
-        android:label="NoteUpdateFragment" />
+        android:label="Update Note" />
 </navigation>
