@@ -15,6 +15,8 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,9 +27,6 @@ import com.example.notes.databinding.MainFragmentBinding;
 import com.example.notes.ui.NoteAdapter;
 import com.example.notes.ui.SharedViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -35,8 +34,8 @@ public class MainFragment extends Fragment {
     private MainFragmentBinding binding;
     private SharedViewModel sharedViewModel;
     private NoteAdapter noteRecAdapter;
-    private List<Note> noteList;
     private FragmentActivity context;
+    private NavController navController;
 
     @Nullable
     @Override
@@ -49,6 +48,7 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
+        navController = Navigation.findNavController(view);
         if (getActivity() != null) context = getActivity();
         sharedViewModel = new ViewModelProvider(context).get(SharedViewModel.class);
 
@@ -64,10 +64,7 @@ public class MainFragment extends Fragment {
     }
 
     private void setUpObservers() {
-        sharedViewModel.getAllNotes().observe(getViewLifecycleOwner(), notes -> {
-            noteRecAdapter.submitList(notes);
-            noteList = new ArrayList<>(notes);
-        });
+        sharedViewModel.getAllNotes().observe(getViewLifecycleOwner(), notes -> noteRecAdapter.submitList(notes));
     }
 
     private void setUpOnCLickListeners() {
@@ -80,13 +77,11 @@ public class MainFragment extends Fragment {
             @Override
             public void onRootClick(Note note) {
                 sharedViewModel.setNote(note);
-                attachNoteUpdateFragment();
+                navController.navigate(R.id.action_mainFragment_to_noteUpdateFragment);
             }
         });
-
+        binding.addNote.setOnClickListener(v -> navController.navigate(R.id.action_mainFragment_to_addNoteFragment));
         swipeToDeleteNote();
-
-        binding.addNote.setOnClickListener(v -> attachAddNoteFragment());
     }
 
     private void swipeToDeleteNote() {
@@ -114,22 +109,6 @@ public class MainFragment extends Fragment {
             dialog.dismiss();
         });
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> dialog.dismiss());
-    }
-
-    private void attachAddNoteFragment() {
-        context.getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_placeholder, new AddNoteFragment())
-                .addToBackStack(null)
-                .commit();
-    }
-
-    private void attachNoteUpdateFragment() {
-        context.getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_placeholder, new NoteUpdateFragment())
-                .addToBackStack(null)
-                .commit();
     }
 
     @Override
