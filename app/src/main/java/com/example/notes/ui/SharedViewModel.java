@@ -1,8 +1,10 @@
 package com.example.notes.ui;
 
+import androidx.hilt.Assisted;
 import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
+import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
 import com.example.notes.database.NoteRepository;
@@ -12,12 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SharedViewModel extends ViewModel {
-    private NoteRepository repository;
+    private final SavedStateHandle savedStateHandle;
+    private final NoteRepository repository;
+    private final LiveData<List<Note>> notes;
     private Note note;
-    private LiveData<List<Note>> notes;
 
     @ViewModelInject
-    public SharedViewModel(NoteRepository noteRepository) {
+    public SharedViewModel(@Assisted SavedStateHandle savedStateHandle, NoteRepository noteRepository) {
+        this.savedStateHandle = savedStateHandle;
         this.repository = noteRepository;
         this.notes = LiveDataReactiveStreams.fromPublisher(repository.getAllNotes());
     }
@@ -39,11 +43,13 @@ public class SharedViewModel extends ViewModel {
     }
 
     public void setNote(Note note) {
+        savedStateHandle.set("note", note);
         this.note = note;
     }
 
     public Note getNote() {
-        return note;
+        if (note == null) return savedStateHandle.get("note");
+        else return note;
     }
 
     public LiveData<List<Note>> getAllNotes() {
